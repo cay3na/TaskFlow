@@ -24,7 +24,7 @@ public class AppDbContext : DbContext
 
             entity.Property(u => u.Email).IsRequired().HasMaxLength(200);
             entity.Property(u => u.Name).IsRequired().HasMaxLength(100);
-            entity.Property(u => u.PasswordHash).IsRequired();
+            entity.Property(u => u.PasswordHash).IsRequired().HasMaxLength(60);
         });
 
         modelBuilder.Entity<Project>(entity =>
@@ -46,7 +46,8 @@ public class AppDbContext : DbContext
             entity.Property(t => t.Description).HasMaxLength(2000);
 
             entity.Property(t => t.Status)
-                  .HasConversion<string>();
+                  .HasConversion<string>()
+                  .HaveMaxLength(50);
 
             entity.HasOne(t => t.Project)
                   .WithMany(p => p.Tasks)
