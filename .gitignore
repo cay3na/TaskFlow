@@ -16,3 +16,6 @@ appsettings.Development.json
 # Secrets
 appsettings.*.json
 appsettings.json
+
+
+Migrations/
