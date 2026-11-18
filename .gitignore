@@ -21,6 +21,7 @@ yarn-error.log
 *.sublime-workspace
 
 # Miscellaneous
+.angular
 /.angular/cache
 .sass-cache/
 /connect.lock
@@ -32,6 +33,7 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
 
 
 # .NET
@@ -52,5 +54,5 @@ appsettings.Development.json
 appsettings.*.json
 appsettings.json
 
-
+# Migrations
 Migrations/
