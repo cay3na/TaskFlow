@@ -1,0 +1,112 @@
+<div class="container">
+
+  <div class="dashboard-header">
+
+    <div>
+
+      <h1>Welcome back, {{ userName }}!</h1>
+
+      <p class="subtitle">{{ projects().length }} project(s) in your workspace</p>
+
+    </div>
+
+    <button mat-raised-button color="primary" (click)="toggleCreateForm()">
+
+      <mat-icon>{{ showCreateForm() ? 'close' : 'add' }}</mat-icon>
+
+      {{ showCreateForm() ? 'Cancel' : 'New Project' }}
+
+    </button>
+
+  </div>
+
+  <!-- Create project form (shown/hidden with signal) -->
+  <mat-card *ngIf="showCreateForm()" class="create-form-card">
+
+    <mat-card-content>
+
+      <form [formGroup]="createForm" (ngSubmit)="createProject()">
+
+        <h3>New Project</h3>
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>Project Name</mat-label>
+
+          <input matInput formControlName="name" placeholder="My project">
+
+          <mat-error *ngIf="createForm.get('name')?.hasError('required')">Name is required</mat-error>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>Description (optional)</mat-label>
+
+          <textarea matInput formControlName="description" rows="3"></textarea>
+
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="createForm.invalid">
+
+          Create Project
+
+        </button>
+
+      </form>
+
+    </mat-card-content>
+
+  </mat-card>
+
+  <!-- Loading state -->
+  <p *ngIf="loading()" class="loading-text">Loading projects...</p>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading() && projects().length === 0" class="empty-state">
+
+    <mat-icon>folder_open</mat-icon>
+
+    <p>No projects yet. Create your first one!</p>
+
+  </div>
+
+  <!-- Project grid -->
+  <div class="card-grid" *ngIf="!loading() && projects().length > 0">
+
+    <!-- (click) event binding: calls openProject() when the card is clicked -->
+    <mat-card *ngFor="let project of projects()" class="project-card" (click)="openProject(project.id)">
+
+      <mat-card-header>
+
+        <mat-card-title>{{ project.name }}</mat-card-title>
+
+        <mat-card-subtitle>{{ project.taskCount }} task(s)</mat-card-subtitle>
+
+      </mat-card-header>
+
+      <mat-card-content>
+
+        <p class="description">{{ project.description || 'No description provided.' }}</p>
+
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+
+        <button mat-icon-button color="warn" (click)="deleteProject($event, project.id)" title="Delete project">
+
+          <mat-icon>delete</mat-icon>
+
+        </button>
+
+        <button mat-button color="primary">Open →</button>
+
+      </mat-card-actions>
+
+    </mat-card>
+
+  </div>
+
+</div>
+
+
