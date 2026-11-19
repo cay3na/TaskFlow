@@ -283,3 +283,4 @@ describe('DashboardComponent', () => {
     expect(router.navigate).not.toHaveBeenCalled();
   });
 });
+
