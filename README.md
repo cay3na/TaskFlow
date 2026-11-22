@@ -4,7 +4,7 @@ Dashboard
 ![Dashboard](project-images/dashboard.png)
 
 Task Kanban Board
-![Dashboard](project-images/all_task_kanban_board02.png)
+![Dashboard](project-images/all_task_kanban_board01.png)
 
 
 
