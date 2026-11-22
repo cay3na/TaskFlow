@@ -99,3 +99,11 @@
   padding: 12px 0; 
   text-align: center; 
 }
+
+.status-actions {
+  margin-left: auto;
+}
+
+.status-actions + .status-actions {
+  margin-left: 2px;
+}

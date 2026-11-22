@@ -75,10 +75,10 @@
 
       <h3 class="column-title todo-title">
 
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-          <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
-        </svg>   
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="19" height="19" class="main-grid-item-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+          <rect height="4" rx="1" ry="1" width="8" x="8" y="2" />
+        </svg>  
 
         To Do ({{ todoTasks().length }})
 
@@ -104,7 +104,7 @@
 
           </button>
 
-          <button mat-icon-button color="warn" (click)="deleteTask(task.id)" title="Delete">
+          <button mat-icon-button color="warn" class="status-actions" (click)="deleteTask(task.id)" title="Delete">
 
             <mat-icon>delete</mat-icon>
 
@@ -121,12 +121,7 @@
 
       <h3 class="column-title inprogress-title"> 
 
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M23 4v6h-6"/>
-          <path d="M1 20v-6h6"/>
-          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/>
-          <path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-        </svg>
+        <mat-icon>sync</mat-icon>
 
         In Progress ({{ inProgressTasks().length }})
 
@@ -152,13 +147,13 @@
 
           </button>
 
-          <button mat-button (click)="updateStatus(task, 'Todo')">
+          <button mat-button class="status-actions" (click)="updateStatus(task, 'Todo')">
 
             <mat-icon>undo</mat-icon>
 
           </button>
 
-          <button mat-icon-button color="warn" (click)="deleteTask(task.id)" title="Delete">
+          <button mat-icon-button color="warn" class="status-actions" (click)="deleteTask(task.id)" title="Delete">
 
             <mat-icon>delete</mat-icon>
 
@@ -175,9 +170,7 @@
 
       <h3 class="column-title done-title">
 
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>   
+        <mat-icon>check</mat-icon>   
 
         Done ({{ doneTasks().length }})
         
@@ -203,7 +196,7 @@
 
           </button>
 
-          <button mat-icon-button color="warn" (click)="deleteTask(task.id)" title="Delete">
+          <button mat-icon-button color="warn" class="status-actions" (click)="deleteTask(task.id)" title="Delete">
 
             <mat-icon>delete</mat-icon>
 

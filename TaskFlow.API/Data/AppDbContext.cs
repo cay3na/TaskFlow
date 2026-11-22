@@ -46,8 +46,7 @@ public class AppDbContext : DbContext
             entity.Property(t => t.Description).HasMaxLength(2000);
 
             entity.Property(t => t.Status)
-                  .HasConversion<string>()
-                  .HaveMaxLength(50);
+                  .HasConversion<string>();
 
             entity.HasOne(t => t.Project)
                   .WithMany(p => p.Tasks)

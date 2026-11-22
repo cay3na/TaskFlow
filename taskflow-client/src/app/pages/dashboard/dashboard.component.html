@@ -93,13 +93,19 @@
 
       <mat-card-actions align="end">
 
-        <button mat-icon-button color="warn" (click)="deleteProject($event, project.id)" title="Delete project">
+        <button mat-icon-button color="warn" class="status-actions" (click)="deleteProject($event, project.id)" title="Delete project">
 
           <mat-icon>delete</mat-icon>
 
         </button>
 
-        <button mat-button color="primary">Open →</button>
+        <button mat-button color="primary">
+
+          Open
+
+          <mat-icon iconPositionEnd>arrow_right_alt</mat-icon>
+
+        </button>
 
       </mat-card-actions>
 
