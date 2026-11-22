@@ -1,6 +1,9 @@
 
 
 
+![Dashboard](project-images/dashboard.png)   
+
+
 
 Users can register and login.
 
