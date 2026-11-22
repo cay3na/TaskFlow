@@ -1,7 +1,10 @@
 
 
+Dashboard
+![Dashboard](project-images/dashboard.png)
 
-![Dashboard](project-images/dashboard.png)   
+Task Kanban Board
+![Dashboard](project-images/all_task_kanban_board02.png)
 
 
 
