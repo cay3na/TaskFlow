@@ -29,7 +29,8 @@ public class ProjectService : IProjectService
                 OwnerId = p.OwnerId,
                 OwnerName = p.Owner.Name,
                 TaskCount = p.Tasks.Count,
-                CreatedAt = p.CreatedAt
+                CreatedAt = p.CreatedAt,
+                UpdatedAt = p.UpdatedAt
             })
             .ToListAsync();
     }
@@ -48,7 +49,8 @@ public class ProjectService : IProjectService
                 OwnerId = p.OwnerId,
                 OwnerName = p.Owner.Name,
                 TaskCount = p.Tasks.Count,
-                CreatedAt = p.CreatedAt
+                CreatedAt = p.CreatedAt,
+                UpdatedAt = p.UpdatedAt
             })
             .FirstOrDefaultAsync();
     }
@@ -75,7 +77,8 @@ public class ProjectService : IProjectService
             OwnerId = project.OwnerId,
             OwnerName = owner?.Name ?? "",
             TaskCount = 0,
-            CreatedAt = project.CreatedAt
+            CreatedAt = project.CreatedAt,
+            UpdatedAt = project.UpdatedAt
         };
     }
 
@@ -101,7 +104,8 @@ public class ProjectService : IProjectService
             OwnerId = project.OwnerId,
             OwnerName = project.Owner.Name,
             TaskCount = project.Tasks.Count,
-            CreatedAt = project.CreatedAt
+            CreatedAt = project.CreatedAt,
+            UpdatedAt = project.UpdatedAt
         };
     }
 

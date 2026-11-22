@@ -107,3 +107,60 @@
 .status-actions + .status-actions {
   margin-left: 2px;
 }
+
+
+.title-row { 
+  display: flex; 
+  align-items: center; 
+  gap: 4px; 
+}
+
+.title-row h1 { 
+  line-height: 36px; 
+  margin: 0; 
+}
+
+.task-head { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  gap: 8px; 
+}
+
+.task-head strong { 
+  line-height: 36px; 
+}
+ 
+.edit-btn { 
+  width: 36px; 
+  height: 36px; 
+  padding: 6px; 
+  flex-shrink: 0; 
+}
+
+.edit-btn .mat-icon { 
+  font-size: 18px; 
+  width: 18px; 
+  height: 18px; 
+}
+
+.timestamp { 
+  font-size: 12px; 
+  color: #888888; 
+  margin-top: 6px; 
+}
+ 
+.edit-form { 
+  padding-top: 8px; 
+}
+
+.edit-actions { 
+  display: flex; 
+  gap: 8px; 
+}
+
+.edit-error { 
+  color: #c62828; 
+  font-size: 13px; 
+  margin-bottom: 8px; 
+}

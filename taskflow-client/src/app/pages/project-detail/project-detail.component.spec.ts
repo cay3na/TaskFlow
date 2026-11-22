@@ -77,7 +77,8 @@ describe('ProjectDetailComponent', () => {
       'updateTask',
       'deleteTask',
     ]);
-    const projectSpy = jasmine.createSpyObj('ProjectService', ['getProject']);
+
+    const projectSpy = jasmine.createSpyObj('ProjectService', ['getProject', 'updateProject']);
 
     projectSpy.getProject.and.returnValue(of(mockProject));
     taskSpy.getTasks.and.returnValue(of(mockTasks));
@@ -382,4 +383,201 @@ describe('ProjectDetailComponent', () => {
     const doneCard = doneColumn.query(By.css('.task-card'));
     expect(doneCard.nativeElement.classList).toContain('done-card');
   });
+
+
+  it('should open the project edit form pre-filled with the current name and description', () => {
+    component.startEditProject();
+    fixture.detectChanges();
+   
+    expect(component.editingProject()).toBeTrue();
+    expect(component.projectEditForm.value).toEqual({
+      name: 'TaskFlow Redesign',
+      description: 'Revamp the task board UI',
+    });
+    expect(fixture.debugElement.query(By.css('.header-text form.edit-form'))).toBeTruthy();
+  });
+   
+  it('should open the project edit form when the pencil next to the title is clicked', () => {
+    const pencil = fixture.debugElement.query(By.css('.title-row .edit-btn')).nativeElement;
+    pencil.click();
+    expect(component.editingProject()).toBeTrue();
+  });
+   
+  it('should close the project edit form on Cancel without calling the API', () => {
+    component.startEditProject();
+    fixture.detectChanges();
+    component.cancelEditProject();
+    fixture.detectChanges();
+ 
+    expect(component.editingProject()).toBeFalse();
+    expect(projectService.updateProject).not.toHaveBeenCalled();
+    expect(fixture.debugElement.query(By.css('.header-text form'))).toBeFalsy();
+  });
+   
+  it('should send trimmed project values to the API and show the saved project', () => {
+    const updated: Project = {
+      ...mockProject,
+      name: 'Fixed name',
+      description: 'Fixed desc',
+      updatedAt: '2026-11-22T11:05:00Z',
+    };
+    projectService.updateProject.and.returnValue(of(updated));
+ 
+    component.startEditProject();
+    component.projectEditForm.setValue({ name: '  Fixed name  ', description: ' Fixed desc ' });
+    component.saveProject();
+ 
+    expect(projectService.updateProject).toHaveBeenCalledWith(42, {
+      name: 'Fixed name',
+      description: 'Fixed desc',
+    });
+    expect(component.project()).toEqual(updated);
+    expect(component.editingProject()).toBeFalse();
+  });
+ 
+  it('should not save a project whose name is only spaces', () => {
+    component.startEditProject();
+    component.projectEditForm.patchValue({ name: '   ' });
+    expect(component.projectEditForm.invalid).toBeTrue();
+ 
+    component.saveProject();
+    expect(projectService.updateProject).not.toHaveBeenCalled();
+  });
+ 
+  it('should keep the project editor open and show an error if saving fails', () => {
+    projectService.updateProject.and.returnValue(throwError(() => ({ status: 500 })));
+ 
+    component.startEditProject();
+    component.saveProject();
+ 
+    expect(component.editingProject()).toBeTrue();
+    expect(component.editError()).toContain('Could not save the project');
+  });
+ 
+
+  //EDIT TASK
+ 
+  it('should open the task editor, pre-filled, when a task pencil is clicked', () => {
+    const todoColumn = fixture.debugElement.queryAll(By.css('.kanban-column'))[0];
+    todoColumn.query(By.css('.edit-btn')).nativeElement.click();
+    fixture.detectChanges();
+ 
+    expect(component.editingTaskId()).toBe(todoTask.id);
+    expect(component.taskEditForm.value).toEqual({
+      title: 'Write tests',
+      description: 'Add Jasmine specs',
+    });
+    expect(todoColumn.query(By.css('form.edit-form'))).toBeTruthy();
+  });
+ 
+  it('should allow only one task editor open at a time', () => {
+    component.startEditTask(todoTask);
+    component.startEditTask(inProgressTask);
+    fixture.detectChanges();
+ 
+    expect(component.editingTaskId()).toBe(inProgressTask.id);
+    expect(fixture.debugElement.queryAll(By.css('form.edit-form')).length).toBe(1);
+  });
+ 
+  it('should close the project editor when a task editor opens, and the other way round', () => {
+    component.startEditProject();
+    component.startEditTask(todoTask);
+    expect(component.editingProject()).toBeFalse();
+    expect(component.editingTaskId()).toBe(todoTask.id);
+ 
+    component.startEditProject();
+    expect(component.editingTaskId()).toBeNull();
+    expect(component.editingProject()).toBeTrue();
+  });
+ 
+  it('should close the task editor on Cancel without calling the API', () => {
+    component.startEditTask(todoTask);
+    component.cancelEditTask();
+ 
+    expect(component.editingTaskId()).toBeNull();
+    expect(taskService.updateTask).not.toHaveBeenCalled();
+  });
+ 
+  it('should save edited task text, keep its status as a number, and update the card', () => {
+    const updated: Task = {
+      ...todoTask,
+      title: 'Write more tests',
+      description: 'New text',
+      updatedAt: '2026-11-22T11:06:00Z',
+    };
+    taskService.updateTask.and.returnValue(of(updated));
+ 
+    component.startEditTask(todoTask);
+    component.taskEditForm.setValue({ title: '  Write more tests ', description: ' New text ' });
+    component.saveTask(todoTask);
+ 
+    expect(taskService.updateTask).toHaveBeenCalledWith(42, todoTask.id, {
+      title: 'Write more tests',
+      description: 'New text',
+      status: 0 as any,                       // Todo stays 0
+      assignedToId: todoTask.assignedToId,
+    });
+    expect(component.tasks().find(t => t.id === todoTask.id)).toEqual(updated);
+    expect(component.editingTaskId()).toBeNull();
+  });
+ 
+  it('should keep the status and assignee of an InProgress task when only its text is edited', () => {
+    taskService.updateTask.and.returnValue(of({ ...inProgressTask, title: 'Build API v2' }));
+ 
+    component.startEditTask(inProgressTask);
+    component.taskEditForm.setValue({ title: 'Build API v2', description: '' });
+    component.saveTask(inProgressTask);
+ 
+    expect(taskService.updateTask).toHaveBeenCalledWith(42, inProgressTask.id, {
+      title: 'Build API v2',
+      description: '',
+      status: 1 as any,                       // InProgress stays 1
+      assignedToId: 5,
+    });
+  });
+ 
+  it('should not save a task whose title is only spaces', () => {
+    component.startEditTask(todoTask);
+    component.taskEditForm.patchValue({ title: '   ' });
+    expect(component.taskEditForm.invalid).toBeTrue();
+ 
+    component.saveTask(todoTask);
+    expect(taskService.updateTask).not.toHaveBeenCalled();
+  });
+ 
+  it('should keep the task editor open and show an error if saving fails', () => {
+    taskService.updateTask.and.returnValue(throwError(() => ({ status: 500 })));
+ 
+    component.startEditTask(todoTask);
+    component.saveTask(todoTask);
+ 
+    expect(component.editingTaskId()).toBe(todoTask.id);
+    expect(component.editError()).toContain('Could not save the task');
+  });
+ 
+  // "LAST UPDATED" TIME
+ 
+  it('should show a "Last updated" line on every task card', () => {
+    const stamps = fixture.debugElement.queryAll(By.css('.task-card .timestamp'));
+    expect(stamps.length).toBe(3);
+    stamps.forEach(s => expect(s.nativeElement.textContent).toContain('Last updated:'));
+  });
+ 
+  it('should show "Last updated" for the project when the API sends updatedAt', () => {
+    component.project.set({ ...mockProject, updatedAt: '2026-11-22T11:05:30.123' });
+    fixture.detectChanges();
+ 
+    const stamp = fixture.debugElement.query(By.css('.header-text .timestamp'));
+    expect(stamp.nativeElement.textContent).toContain('Last updated:');
+  });
+ 
+  it('should hide the project "Last updated" line when updatedAt is missing', () => {
+    expect(fixture.debugElement.query(By.css('.header-text .timestamp'))).toBeFalsy();
+  });
+ 
+  it('should treat API times without a Z as UTC (so the browser shows the right local hour)', () => {
+    expect(component.asUtc('2026-11-22T11:05:30.123')).toBe('2026-11-22T11:05:30.123Z');
+  });
+
+
 });

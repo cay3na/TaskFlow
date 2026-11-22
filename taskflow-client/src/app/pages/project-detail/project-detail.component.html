@@ -10,9 +10,71 @@
 
     <div class="header-text">
 
-      <h1>{{ project()?.name || 'Loading...' }}</h1>
+      <!-- Normal view of the project -->
+      <ng-container *ngIf="!editingProject(); else projectEditor">
 
-      <p class="subtitle" *ngIf="project()?.description">{{ project()?.description }}</p>
+        <div class="title-row">
+
+          <h1>{{ project()?.name || 'Loading...' }}</h1>
+
+          <button mat-icon-button class="edit-btn" *ngIf="project()"
+                  (click)="startEditProject()" title="Edit project name and description">
+
+            <mat-icon>edit</mat-icon>
+
+          </button>
+
+        </div>
+
+        <p class="subtitle" *ngIf="project()?.description">{{ project()?.description }}</p>
+
+        <p class="timestamp" *ngIf="project()?.updatedAt as updated">
+
+          Last updated: {{ asUtc(updated) | date: 'dd MMM yyyy, HH:mm' }}
+
+        </p>
+
+      </ng-container>
+      
+      <!-- Edit form for the project -->
+
+      <ng-template #projectEditor>
+
+        <form [formGroup]="projectEditForm" (ngSubmit)="saveProject()" class="edit-form">
+
+          <mat-form-field appearance="outline" class="full-width">
+
+            <mat-label>Project name</mat-label>
+
+            <input matInput formControlName="name">
+
+            <mat-error>Project name is required (max 200 characters)</mat-error>
+
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+
+            <mat-label>Description</mat-label>
+
+            <textarea matInput formControlName="description" rows="3"></textarea>
+
+            <mat-error>Description is too long (max 1000 characters)</mat-error>
+
+          </mat-form-field>
+
+          <p class="edit-error" *ngIf="editError()">{{ editError() }}</p>
+
+          <div class="edit-actions">
+
+            <button mat-flat-button color="primary" type="submit" [disabled]="projectEditForm.invalid">Save</button>
+
+            <button mat-button type="button" (click)="cancelEditProject()">Cancel</button>
+
+          </div>
+
+        </form>
+
+      </ng-template>
 
     </div>
 
@@ -90,9 +152,7 @@
 
         <mat-card-content>
 
-          <strong>{{ task.title }}</strong>
-
-          <p *ngIf="task.description" class="task-desc">{{ task.description }}</p>
+          <ng-container *ngTemplateOutlet="taskBody; context: { $implicit: task }"></ng-container>
 
         </mat-card-content>
 
@@ -133,9 +193,7 @@
 
         <mat-card-content>
 
-          <strong>{{ task.title }}</strong>
-
-          <p *ngIf="task.description" class="task-desc">{{ task.description }}</p>
+          <ng-container *ngTemplateOutlet="taskBody; context: { $implicit: task }"></ng-container>
 
         </mat-card-content>
 
@@ -182,9 +240,7 @@
 
         <mat-card-content>
 
-          <strong>{{ task.title }}</strong>
-
-          <p *ngIf="task.description" class="task-desc">{{ task.description }}</p>
+          <ng-container *ngTemplateOutlet="taskBody; context: { $implicit: task }"></ng-container>
 
         </mat-card-content>
 
@@ -211,3 +267,72 @@
   </div>
 
 </div>
+
+
+<!--
+  The inside of every task card. 
+  It is written ONCE here and reused by the three
+  columns above through ngTemplateOutlet, 
+  so the edit form only exists in one place
+-->
+<ng-template #taskBody let-task>
+
+  <ng-container *ngIf="editingTaskId() !== task.id; else taskEditor">
+
+    <div class="task-head">
+
+      <strong>{{ task.title }}</strong>
+
+      <button mat-icon-button class="edit-btn" (click)="startEditTask(task)" title="Edit task title and description">
+
+        <mat-icon>edit</mat-icon>
+
+      </button>
+
+    </div>
+
+    <p *ngIf="task.description" class="task-desc">{{ task.description }}</p>
+
+    <p class="timestamp">Last updated: {{ asUtc(task.updatedAt) | date: 'dd MMM yyyy, HH:mm' }}</p>
+
+  </ng-container>
+ 
+  <ng-template #taskEditor>
+
+    <form [formGroup]="taskEditForm" (ngSubmit)="saveTask(task)" class="edit-form">
+
+      <mat-form-field appearance="outline" class="full-width">
+
+        <mat-label>Task title</mat-label>
+
+        <input matInput formControlName="title">
+
+        <mat-error>Title is required (max 300 characters)</mat-error>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+
+        <mat-label>Description</mat-label>
+
+        <textarea matInput formControlName="description" rows="3"></textarea>
+
+        <mat-error>Description is too long (max 2000 characters)</mat-error>
+
+      </mat-form-field>
+
+      <p class="edit-error" *ngIf="editError()">{{ editError() }}</p>
+
+      <div class="edit-actions">
+
+        <button mat-flat-button color="primary" type="submit" [disabled]="taskEditForm.invalid">Save</button>
+
+        <button mat-button type="button" (click)="cancelEditTask()">Cancel</button>
+
+      </div>
+
+    </form>
+
+  </ng-template>
+  
+</ng-template>

@@ -31,4 +31,5 @@ public class ProjectDto
     public string OwnerName { get; set; } = string.Empty;
     public int TaskCount { get; set; }
     public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }
