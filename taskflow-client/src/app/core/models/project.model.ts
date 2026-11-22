@@ -6,13 +6,14 @@ export interface Project {
   ownerName: string;
   taskCount: number;
   createdAt: string;
+  updatedAt?: string;
 }
-
+ 
 export interface CreateProjectRequest {
   name: string;
   description: string;
 }
-
+ 
 export interface UpdateProjectRequest {
   name: string;
   description: string;
